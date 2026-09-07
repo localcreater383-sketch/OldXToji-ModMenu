@@ -11,14 +11,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Extract App Zip
+      - name: Fix App Folder Structure
         run: |
+          mkdir -p app
           if [ -f app.zip ]; then
-            unzip -o app.zip -d .
-          elif [ -f app/app.zip ]; then
-            unzip -o app/app.zip -d .
+            unzip -o app.zip -d app/
+          fi
+          # Agar files bahar root mein hain toh unhe app folder mein move kar do
+          if [ -d src ]; then
+            mv src app/
+          fi
+          if [ -f build.gradle ]; then
+            # Check karo ke kya ye app level ki build.gradle hai
+            mv build.gradle app/ 2>/dev/null || true
           fi
           ls -la
+          ls -la app/
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
